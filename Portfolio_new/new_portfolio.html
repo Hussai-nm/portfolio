@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
-  <!DOCTYPE html>
-  <html lang="en">
+
     <head>
       <meta charset="UTF-8" />
       <meta http-equiv="X-UA-Compatible" content="IE=edge" />
@@ -23,8 +22,9 @@
       />
 
       <!-- ✅ Your CSS file (correct path) -->
-      <link rel="stylesheet" href="./style.css?v=2">
-
+        <!-- Add this right before your stylesheet -->
+        <script>document.documentElement.classList.add('window-ready');</script>
+        <link rel="stylesheet" href="./style.css?v=3" />
     </head>
 
     <body>
@@ -42,8 +42,8 @@
                 <span></span>
               </div>
               <ul class="navlinks">
-                <li><a href="#">Home</a></li>
-                <li><a href="#">About</a></li>
+                <li><a href="new_portfolio.html" class="active">Home</a></li>
+                <li><a href="about.html">About</a></li>
                 <li><a href="#">Portfolio</a></li>
                 <li><a href="#">Contact</a></li>
               </ul>
