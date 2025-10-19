@@ -38,9 +38,11 @@
             </section>
 
             <section class="bg-panel" data-key="skills">
+              <div class="tech-cloud" aria-hidden="true"></div>
+
               <div
                 class="bg-photo"
-                style="background-image: url('images/skills-bg.jpg')"
+                style="background-image: url('focus.jpeg')"
               ></div>
               <div class="headline-bg">Skills</div>
             </section>
@@ -188,6 +190,67 @@
       });
 
       if ("scrollRestoration" in history) history.scrollRestoration = "manual";
+    </script>
+    <script>
+      (function () {
+        const cloud = document.querySelector(
+          '.bg-panel[data-key="skills"] .tech-cloud'
+        );
+        if (!cloud) return;
+
+        const words = [
+          "HTML",
+          "CSS",
+          "JavaScript",
+          "React",
+          "Node.js",
+          "Express",
+          "Python",
+          "MongoDB",
+          "MySQL",
+          "Git",
+          "GitHub",
+          "VS Code",
+          "Figma",
+          "REST",
+          "APIs",
+          "JSON",
+          "TypeScript",
+          "Tailwind",
+          "Accessibility",
+          "Responsive",
+          "SEO",
+          "Linux",
+          "Docker",
+          "CI/CD",
+        ];
+
+        const COUNT = 26; // how many floating labels
+
+        for (let i = 0; i < COUNT; i++) {
+          const el = document.createElement("span");
+          el.className = "word";
+          el.textContent = words[i % words.length];
+
+          // random size (12–36px, responsive)
+          const size = (Math.random() * 1.2 + 0.8).toFixed(2); // 0.8–2.0rem-ish
+          el.style.fontSize = `clamp(12px, ${size}rem, 36px)`;
+
+          // random position
+          el.style.left = `${Math.random() * 100}%`;
+          el.style.top = `${Math.random() * 100}%`;
+
+          // random duration (22–45s) & negative delay (desync)
+          const dur = 22 + Math.random() * 23;
+          el.style.setProperty("--dur", `${dur}s`);
+          el.style.animationDelay = `${-Math.random() * dur}s`;
+
+          // random opacity (0.18–0.45)
+          el.style.opacity = (0.18 + Math.random() * 0.27).toFixed(2);
+
+          cloud.appendChild(el);
+        }
+      })();
     </script>
   </body>
 </html>
