@@ -4,11 +4,8 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>About | Mehboob Hussain</title>
-
-    <script>
-      document.documentElement.classList.add("window-ready");
-    </script>
-    <link rel="stylesheet" href="./style.css?v=8" />
+    <script>document.documentElement.classList.add("window-ready");</script>
+    <link rel="stylesheet" href="./style.css?v=9" />
   </head>
   <body>
     <div class="hero-header">
@@ -28,61 +25,35 @@
         <!-- ===== Scrollytelling ===== -->
         <main class="story">
           <div class="bg-scroller">
-            <!-- Each panel has its own .bg-photo div (consistent structure) -->
+            <!-- About -->
             <section class="bg-panel" data-key="about">
-              <div
-                class="bg-photo"
-                style="background-image: url('better.jpeg')"
-              ></div>
+              <div class="bg-photo" style="background-image:url('better.jpeg')"></div>
               <div class="headline-bg">About Me</div>
             </section>
 
+            <!-- Skills -->
             <section class="bg-panel" data-key="skills">
               <div class="tech-cloud" aria-hidden="true"></div>
-
-              <div
-                class="bg-photo"
-                style="background-image: url('focus.jpeg')"
-              ></div>
+              <div class="bg-photo" style="background-image:url('focus.jpeg')"></div>
               <div class="headline-bg">Skills</div>
             </section>
 
+            <!-- Journey (Education) — single panel that gallery-swaps -->
             <section class="bg-panel" data-key="journey">
-              <div
-                class="bg-photo"
-                style="background-image: url('images/journey-bg.jpg')"
-              ></div>
-              <div class="headline-bg">Journey</div>
+              <div class="bg-photo" style="background-image:url('Du.jpeg')"></div>
+              <div class="headline-bg">EDUCATION</div>
+              <div class="panel-content">
+                <p>Student at the University Of Denver.</p>
+              </div>
             </section>
           </div>
 
-          <!-- Fixed overlay (content swaps) -->
+          <!-- Fixed overlay (content swaps by IntersectionObserver) -->
           <div class="overlay">
             <article class="overlay-block" data-key="about">
-              <p>
-                I’m <strong>Mehboob Hussain</strong> — a full-stack developer
-                who enjoys turning ideas into clean, responsive, and useful web
-                experiences.
-              </p>
+              <p>I’m <strong>Mehboob Hussain</strong> — a full-stack developer who enjoys turning ideas into clean, responsive, and useful web experiences.</p>
             </article>
-
-            <article class="overlay-block" data-key="skills">
-              <!-- <h2>Skills</h2> -->
-              <!-- <ul class="cols">
-                <li><strong>Frontend:</strong> HTML, CSS, JavaScript, React</li>
-                <li><strong>Backend:</strong> Node.js, Express, Python</li>
-                <li><strong>Databases:</strong> MongoDB, MySQL</li>
-                <li><strong>Tools:</strong> Git, Figma, VS Code</li>
-              </ul> -->
-            </article>
-
-            <article class="overlay-block" data-key="journey">
-              <h2>My Journey</h2>
-              <p>
-                From curiosity to craft—learning by building. I focus on UX,
-                performance, and shipping projects that help people.
-              </p>
-            </article>
+            <article class="overlay-block" data-key="skills"></article>
           </div>
         </main>
         <!-- ===== /Scrollytelling ===== -->
@@ -123,52 +94,46 @@
           b.classList.toggle("active", match);
           if (match) {
             b.classList.remove("enter-up", "enter-down");
-            if (document.body.classList.contains("dir-down"))
-              b.classList.add("enter-down");
-            if (document.body.classList.contains("dir-up"))
-              b.classList.add("enter-up");
+            if (document.body.classList.contains("dir-down")) b.classList.add("enter-down");
+            if (document.body.classList.contains("dir-up"))   b.classList.add("enter-up");
           }
         });
       }
       const io = new IntersectionObserver(
-        (entries) => {
-          entries.forEach((entry) => {
-            if (entry.isIntersecting) activate(entry.target.dataset.key);
-          });
-        },
+        (entries) => entries.forEach((e) => e.isIntersecting && activate(e.target.dataset.key)),
         { threshold: 0.4 }
       );
       panels.forEach((p) => io.observe(p));
 
-      // Fade + tiny parallax
+      // Fade + tiny parallax on each bg
       const ease = (t) => 0.5 - Math.cos(Math.PI * t) / 2;
-      const dense = (step = 0.02) => {
-        const t = [];
-        for (let i = 0; i <= 1; i += step) t.push(+i.toFixed(2));
-        return t;
-      };
+      const dense = (step = 0.02) => { const t=[]; for (let i=0;i<=1;i+=step) t.push(+i.toFixed(2)); return t; };
       const fadeIO = new IntersectionObserver(
-        (entries) => {
+        (entries) =>
           entries.forEach((entry) => {
             const r = Math.min(1, Math.max(0, entry.intersectionRatio));
             const e = ease(r);
             const headline = entry.target.querySelector(".headline-bg");
             const photo = entry.target.querySelector(".bg-photo");
             if (headline) {
-              const hMin = 0.08,
-                hMax = 0.3;
+              const hMin = 0.08, hMax = 0.3;
               headline.style.opacity = (hMin + (hMax - hMin) * e).toFixed(3);
             }
-            if (photo) {
-              const pMin = 0.1,
-                pMax = 0.55;
+            if (entry.target.dataset.key !== "journey" && photo) {
+              const pMin = 0.1, pMax = 0.55;
               photo.style.opacity = (pMin + (pMax - pMin) * e).toFixed(3);
               photo.style.transform = `translateY(${(1 - e) * 24}px)`;
+            } else if (entry.target.dataset.key === "journey") {
+              const du = entry.target.querySelector(".bg-photo:not(.travel):not(.saying)");
+              const tr = entry.target.querySelector(".bg-photo.travel");
+              const sg = entry.target.querySelector(".bg-photo.saying");
+              const ty = `${(1 - e) * 24}px`;
+              if (du) du.style.transform = `translateY(${ty})`;
+              if (tr) tr.style.transform = `translateY(${ty})`;
+              if (sg) sg.style.transform = `translateY(${ty})`;
             }
-            if (r < 0.22) entry.target.classList.add("dim");
-            else entry.target.classList.remove("dim");
-          });
-        },
+            entry.target.classList.toggle("dim", r < 0.22);
+          }),
         { threshold: dense() }
       );
       document.querySelectorAll(".bg-panel").forEach((p) => fadeIO.observe(p));
@@ -177,11 +142,10 @@
       const current = window.location.pathname.split("/").pop() || "about.html";
       document.querySelectorAll("nav .navlinks a").forEach((a) => {
         const href = a.getAttribute("href");
-        if (href === current || href === "./" + current)
-          a.classList.add("active");
+        if (href === current || href === "./" + current) a.classList.add("active");
       });
 
-      // Gentle opacity shift on scroll for first word
+      // Gentle opacity shift on scroll for first word (topmost section only)
       window.addEventListener("scroll", () => {
         const word = document.querySelector(".headline-bg");
         if (!word) return;
@@ -191,66 +155,146 @@
 
       if ("scrollRestoration" in history) history.scrollRestoration = "manual";
     </script>
+
+    <!-- Floating tech words (skills) -->
     <script>
       (function () {
-        const cloud = document.querySelector(
-          '.bg-panel[data-key="skills"] .tech-cloud'
-        );
+        const cloud = document.querySelector('.bg-panel[data-key="skills"] .tech-cloud');
         if (!cloud) return;
 
-        const words = [
-          "HTML",
-          "CSS",
-          "JavaScript",
-          "React",
-          "Node.js",
-          "Express",
-          "Python",
-          "MongoDB",
-          "MySQL",
-          "Git",
-          "GitHub",
-          "VS Code",
-          "Figma",
-          "REST",
-          "APIs",
-          "JSON",
-          "TypeScript",
-          "Tailwind",
-          "Accessibility",
-          "Responsive",
-          "SEO",
-          "Linux",
-          "Docker",
-          "CI/CD",
-        ];
-
-        const COUNT = 26; // how many floating labels
-
+        const words = ["HTML","CSS","JavaScript","React","Node.js","Express","Python","MongoDB","MySQL","Git","GitHub","VS Code","Figma","REST","APIs","JSON","TypeScript","Tailwind","Accessibility","Responsive","SEO","Linux","Docker","CI/CD"];
+        const COUNT = 26;
         for (let i = 0; i < COUNT; i++) {
           const el = document.createElement("span");
           el.className = "word";
           el.textContent = words[i % words.length];
-
-          // random size (12–36px, responsive)
-          const size = (Math.random() * 1.2 + 0.8).toFixed(2); // 0.8–2.0rem-ish
+          const size = (Math.random() * 1.2 + 0.8).toFixed(2);
           el.style.fontSize = `clamp(12px, ${size}rem, 36px)`;
-
-          // random position
           el.style.left = `${Math.random() * 100}%`;
           el.style.top = `${Math.random() * 100}%`;
-
-          // random duration (22–45s) & negative delay (desync)
           const dur = 22 + Math.random() * 23;
           el.style.setProperty("--dur", `${dur}s`);
           el.style.animationDelay = `${-Math.random() * dur}s`;
-
-          // random opacity (0.18–0.45)
           el.style.opacity = (0.18 + Math.random() * 0.27).toFixed(2);
-
           cloud.appendChild(el);
         }
       })();
+    </script>
+
+    <!-- Journey: one-line crossfade -->
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        const p = document.querySelector('.bg-panel[data-key="journey"] .panel-content p');
+        if (!p) return;
+
+        const lines = [
+          "Undergrad at the University Of Denver.",
+          "Mathematics and Middle Eastern Studies minor.",
+          "Computer Science major.",
+          "Data Structures and Algorithms.",
+          "Web programming."
+        ];
+
+        const a = document.createElement("span"); a.className = "line show";
+        const b = document.createElement("span"); b.className = "line";
+        p.textContent = ""; p.append(a, b);
+
+        let i = 0, showingA = true;
+        a.textContent = lines[i];
+        const dwellMs = 2200;
+
+        function swap() {
+          const next = lines[(i + 1) % lines.length];
+          if (showingA) { b.textContent = next; b.classList.add("show"); a.classList.remove("show"); }
+          else { a.textContent = next; a.classList.add("show"); b.classList.remove("show"); }
+          showingA = !showingA; i = (i + 1) % lines.length;
+        }
+        (function loop(){ setTimeout(()=>{ swap(); loop(); }, dwellMs); })();
+      });
+    </script>
+
+    <!-- Bottom-of-page gallery: DU -> Najaf -> Saying -->
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        const panel = document.querySelector('.bg-panel[data-key="journey"]');
+        if (!panel) return;
+
+        const duBg = panel.querySelector(".bg-photo");
+        const headline = panel.querySelector(".headline-bg");
+        const EDU = headline.textContent;
+        const TRAVEL = "TRAVEL";
+        const SAYING = "SAYING";
+
+        // add Najaf bg
+        let najaf = panel.querySelector(".bg-photo.travel");
+        if (!najaf) {
+          najaf = document.createElement("div");
+          najaf.className = "bg-photo travel";
+          najaf.style.backgroundImage = "url('najaf.jpeg')";
+          panel.insertBefore(najaf, duBg.nextSibling);
+        }
+
+        // add Imam Ali bg
+        let sayingBg = panel.querySelector(".bg-photo.saying");
+        if (!sayingBg) {
+          sayingBg = document.createElement("div");
+          sayingBg.className = "bg-photo saying";
+          sayingBg.style.backgroundImage = "url('imamali.jpeg')"; // ensure path
+          panel.insertBefore(sayingBg, najaf.nextSibling);
+        }
+
+        // travel caption
+        let travelCap = panel.querySelector(".travel-caption");
+        if (!travelCap) {
+          travelCap = document.createElement("div");
+          travelCap.className = "travel-caption";
+          travelCap.innerHTML = `<h2>Najaf, Iraq</h2><p>I love travelling and exploring different cultures and ethnicities.</p>`;
+          panel.appendChild(travelCap);
+        }
+
+        // saying caption
+        let sayingCap = panel.querySelector(".saying-caption");
+        if (!sayingCap) {
+          sayingCap = document.createElement("div");
+          sayingCap.className = "saying-caption";
+          sayingCap.innerHTML = `<h2>My favorite saying:</h2><p>“People are either your brothers in faith or your equal in humanity”. - Imam Ali(a)</p>`;
+          panel.appendChild(sayingCap);
+        }
+
+        function apply(state){
+          const vis = 0.55;
+          duBg.style.opacity = "0"; najaf.style.opacity = "0"; sayingBg.style.opacity = "0";
+          if (state === "edu") duBg.style.opacity = String(vis);
+          else if (state === "travel") najaf.style.opacity = String(vis);
+          else if (state === "saying") sayingBg.style.opacity = String(vis);
+
+          panel.classList.toggle("show-travel", state === "travel");
+          panel.classList.toggle("show-saying", state === "saying");
+          headline.textContent = state === "travel" ? TRAVEL : state === "saying" ? SAYING : EDU;
+        }
+
+        let state = "edu";
+        function setState(next){ if (state !== next) { state = next; apply(state); } }
+
+        // thresholds
+        function onScroll(){
+          const y = window.scrollY || window.pageYOffset;
+          const winH = window.innerHeight;
+          const docH = Math.max(
+            document.body.scrollHeight, document.documentElement.scrollHeight,
+            document.body.offsetHeight, document.documentElement.offsetHeight
+          );
+          const d = y + winH;
+          if (d >= docH - 5)       setState("saying");
+          else if (d >= docH - 40) setState("travel");
+          else                     setState("edu");
+        }
+
+        apply(state);
+        onScroll();
+        window.addEventListener("scroll", onScroll, { passive:true });
+        window.addEventListener("resize", onScroll);
+      });
     </script>
   </body>
 </html>
