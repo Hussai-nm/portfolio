@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>About | Mehboob Hussain</title>
+
+    <script>
+      document.documentElement.classList.add("window-ready");
+    </script>
+    <link rel="stylesheet" href="./style.css?v=8" />
+  </head>
+
+  <body>
+    <div class="hero-header">
+      <div class="wrapper">
+        <header>
+          <nav>
+            <div class="togglebtn"><span></span><span></span><span></span></div>
+            <ul class="navlinks">
+              <li><a href="./new_portfolio.html">Home</a></li>
+              <li><a href="./about.html" class="active">About</a></li>
+              <li><a href="./portfolio.html">Portfolio</a></li>
+              <li><a href="./contact.html">Contact</a></li>
+            </ul>
+          </nav>
+        </header>
+
+        <!-- ===== Scrollytelling ===== -->
+        <main class="story">
+          <div class="bg-scroller">
+            <!-- Each panel has its own .bg-photo div (consistent structure) -->
+            <section class="bg-panel" data-key="about">
+              <div
+                class="bg-photo"
+                style="background-image: url('better.jpeg')"
+              ></div>
+              <div class="headline-bg">About Me</div>
+            </section>
+
+            <section class="bg-panel" data-key="skills">
+              <div
+                class="bg-photo"
+                style="background-image: url('images/skills-bg.jpg')"
+              ></div>
+              <div class="headline-bg">Skills</div>
+            </section>
+
+            <section class="bg-panel" data-key="journey">
+              <div
+                class="bg-photo"
+                style="background-image: url('images/journey-bg.jpg')"
+              ></div>
+              <div class="headline-bg">Journey</div>
+            </section>
+          </div>
+
+          <!-- Fixed overlay (content swaps) -->
+          <div class="overlay">
+            <article class="overlay-block" data-key="about">
+              <p>
+                I’m <strong>Mehboob Hussain</strong> — a full-stack developer
+                who enjoys turning ideas into clean, responsive, and useful web
+                experiences.
+              </p>
+            </article>
+
+            <article class="overlay-block" data-key="skills">
+              <h2>Skills</h2>
+              <ul class="cols">
+                <li><strong>Frontend:</strong> HTML, CSS, JavaScript, React</li>
+                <li><strong>Backend:</strong> Node.js, Express, Python</li>
+                <li><strong>Databases:</strong> MongoDB, MySQL</li>
+                <li><strong>Tools:</strong> Git, Figma, VS Code</li>
+              </ul>
+            </article>
+
+            <article class="overlay-block" data-key="journey">
+              <h2>My Journey</h2>
+              <p>
+                From curiosity to craft—learning by building. I focus on UX,
+                performance, and shipping projects that help people.
+              </p>
+            </article>
+          </div>
+        </main>
+        <!-- ===== /Scrollytelling ===== -->
+      </div>
+    </div>
+
+    <!-- ===== Scripts ===== -->
+    <script>
+      // Mobile nav toggle
+      const togglebtn = document.querySelector(".togglebtn");
+      const nav = document.querySelector(".navlinks");
+      if (togglebtn && nav) {
+        togglebtn.addEventListener("click", () => {
+          togglebtn.classList.toggle("click");
+          nav.classList.toggle("open");
+        });
+      }
+
+      // Track scroll direction
+      let lastY = window.scrollY;
+      function setDir() {
+        const y = window.scrollY;
+        document.body.classList.toggle("dir-down", y > lastY);
+        document.body.classList.toggle("dir-up", y < lastY);
+        lastY = y;
+      }
+      setDir();
+      window.addEventListener("scroll", setDir, { passive: true });
+
+      // Activate overlay block matching the visible bg-panel
+      const panels = document.querySelectorAll(".bg-panel");
+      const blocks = document.querySelectorAll(".overlay-block");
+      const overlayRoot = document.querySelector(".overlay");
+      function activate(key) {
+        if (overlayRoot) overlayRoot.dataset.active = key;
+        blocks.forEach((b) => {
+          const match = b.dataset.key === key;
+          b.classList.toggle("active", match);
+          if (match) {
+            b.classList.remove("enter-up", "enter-down");
+            if (document.body.classList.contains("dir-down"))
+              b.classList.add("enter-down");
+            if (document.body.classList.contains("dir-up"))
+              b.classList.add("enter-up");
+          }
+        });
+      }
+      const io = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) activate(entry.target.dataset.key);
+          });
+        },
+        { threshold: 0.4 }
+      );
+      panels.forEach((p) => io.observe(p));
+
+      // Fade + tiny parallax
+      const ease = (t) => 0.5 - Math.cos(Math.PI * t) / 2;
+      const dense = (step = 0.02) => {
+        const t = [];
+        for (let i = 0; i <= 1; i += step) t.push(+i.toFixed(2));
+        return t;
+      };
+      const fadeIO = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            const r = Math.min(1, Math.max(0, entry.intersectionRatio));
+            const e = ease(r);
+            const headline = entry.target.querySelector(".headline-bg");
+            const photo = entry.target.querySelector(".bg-photo");
+            if (headline) {
+              const hMin = 0.08,
+                hMax = 0.3;
+              headline.style.opacity = (hMin + (hMax - hMin) * e).toFixed(3);
+            }
+            if (photo) {
+              const pMin = 0.1,
+                pMax = 0.55;
+              photo.style.opacity = (pMin + (pMax - pMin) * e).toFixed(3);
+              photo.style.transform = `translateY(${(1 - e) * 24}px)`;
+            }
+            if (r < 0.22) entry.target.classList.add("dim");
+            else entry.target.classList.remove("dim");
+          });
+        },
+        { threshold: dense() }
+      );
+      document.querySelectorAll(".bg-panel").forEach((p) => fadeIO.observe(p));
+
+      // Auto-highlight current nav link
+      const current = window.location.pathname.split("/").pop() || "about.html";
+      document.querySelectorAll("nav .navlinks a").forEach((a) => {
+        const href = a.getAttribute("href");
+        if (href === current || href === "./" + current)
+          a.classList.add("active");
+      });
+
+      // Gentle opacity shift on scroll for first word
+      window.addEventListener("scroll", () => {
+        const word = document.querySelector(".headline-bg");
+        if (!word) return;
+        const opacity = 1 - window.scrollY / 600;
+        word.style.opacity = Math.max(opacity, 0.1);
+      });
+
+      if ("scrollRestoration" in history) history.scrollRestoration = "manual";
+    </script>
+  </body>
+</html>
