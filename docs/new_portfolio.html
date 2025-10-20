@@ -5,7 +5,7 @@
       <meta charset="UTF-8" />
       <meta http-equiv="X-UA-Compatible" content="IE=edge" />
       <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-      <title>Responsive Portfolio web design</title>
+      <title>Portfolio</title>
 
       <!-- Google Fonts -->
       <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -43,7 +43,7 @@
                 <li><a href="new_portfolio.html" class="active">Home</a></li>
                 <li><a href="about.html">About</a></li>
                 <li><a href="#">Portfolio</a></li>
-                <li><a href="#">Contact</a></li>
+                <li><a href="contact.html">Contact</a></li>
               </ul>
             </nav>
           </header>
@@ -68,8 +68,8 @@
               </div>
 
               <div class="social">
-                <a href="#"><i class="fa-brands fa-linkedin"></i></a>
-                <a href="#"><i class="fa-brands fa-instagram"></i></a>
+                <a href="https://www.linkedin.com/in/mehboob-hussain-59845a344/"><i class="fa-brands fa-linkedin"></i></a>
+                <a href="https://www.instagram.com/hussai_nm/?next=%2F"><i class="fa-brands fa-instagram"></i></a>
               </div>
             </div>
           </div>
@@ -96,6 +96,29 @@
           smartBackspace: true,
         });
       </script>
+      <script>
+        const logo = document.querySelector('.logo');
+        logo.addEventListener('click', (e) => {
+          const spark = document.createElement('span');
+          spark.textContent = '✨';
+          spark.style.position = 'absolute';
+          spark.style.left = e.pageX + 'px';
+          spark.style.top = e.pageY + 'px';
+          spark.style.animation = 'floatUp 1s ease forwards';
+          document.body.appendChild(spark);
+          setTimeout(() => spark.remove(), 1000);
+        });
+        
+        const style = document.createElement('style');
+        style.textContent = `
+        @keyframes floatUp {
+          from { transform: translateY(0); opacity: 1; }
+          to { transform: translateY(-50px); opacity: 0; }
+        }
+        `;
+        document.head.appendChild(style);
+        </script>
+        
     </body>
   </html>
 </html>
